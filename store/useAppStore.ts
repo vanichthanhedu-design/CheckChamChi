@@ -271,9 +271,10 @@ export const useAppStore = create<AppState & AppActions>()(
         let random = Math.random() * totalWeight;
         
         let rarity = 'Common';
-        if (random < GACHA_RATES.Legendary) rarity = 'Legendary';
-        else if (random < GACHA_RATES.Legendary + GACHA_RATES.Epic) rarity = 'Epic';
-        else if (random < GACHA_RATES.Legendary + GACHA_RATES.Epic + GACHA_RATES.Rare) rarity = 'Rare';
+if (random < GACHA_RATES.UR) rarity = 'UR';
+else if (random < GACHA_RATES.UR + GACHA_RATES.Legendary) rarity = 'Legendary';
+else if (random < GACHA_RATES.UR + GACHA_RATES.Legendary + GACHA_RATES.Epic) rarity = 'Epic';
+else if (random < GACHA_RATES.UR + GACHA_RATES.Legendary + GACHA_RATES.Epic + GACHA_RATES.Rare) rarity = 'Rare';
 
         // Pool từ Gacha
         const pool: (ShopPet | ShopTitle)[] = [
@@ -325,9 +326,10 @@ export const useAppStore = create<AppState & AppActions>()(
   const totalWeight = GACHA_RATES.Common + GACHA_RATES.Rare + GACHA_RATES.Epic + GACHA_RATES.Legendary;
   let random = Math.random() * totalWeight;
   let rarity = 'Common';
-  if (random < GACHA_RATES.Legendary) rarity = 'Legendary';
-  else if (random < GACHA_RATES.Legendary + GACHA_RATES.Epic) rarity = 'Epic';
-  else if (random < GACHA_RATES.Legendary + GACHA_RATES.Epic + GACHA_RATES.Rare) rarity = 'Rare';
+if (random < GACHA_RATES.UR) rarity = 'UR';
+else if (random < GACHA_RATES.UR + GACHA_RATES.Legendary) rarity = 'Legendary';
+else if (random < GACHA_RATES.UR + GACHA_RATES.Legendary + GACHA_RATES.Epic) rarity = 'Epic';
+else if (random < GACHA_RATES.UR + GACHA_RATES.Legendary + GACHA_RATES.Epic + GACHA_RATES.Rare) rarity = 'Rare';
 
   // Pool theo loại
   const pool: (ShopPet | ShopTitle)[] = type === 'pet'

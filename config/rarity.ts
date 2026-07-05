@@ -1,4 +1,4 @@
-export type Rarity = 'Common' | 'Rare' | 'Epic' | 'Legendary';
+export type Rarity = 'Common' | 'Rare' | 'Epic' | 'Legendary' | 'UR';
 
 export interface RarityStyle {
   bg: string;            // class Tailwind
@@ -57,6 +57,17 @@ export const RARITY_STYLES: Record<Rarity, RarityStyle> = {
     badgeText: '#92400E',
     badgeBorder: '#FCD34D',
   },
+  UR: {
+  bg: 'bg-red-100',
+  text: 'text-red-700',
+  border: 'border-red-300',
+  badge: 'bg-red-200 text-red-700 border-red-300',
+  name: 'text-red-700',
+  gradient: 'from-red-400 to-red-600',
+  badgeBg: '#FEE2E2',   // đỏ nhạt
+  badgeText: '#991B1B',  // đỏ đậm
+  badgeBorder: '#FCA5A5',
+},
 };
 
 export function getRarityStyle(rarity?: string): RarityStyle {

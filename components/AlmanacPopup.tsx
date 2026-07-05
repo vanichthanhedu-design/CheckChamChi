@@ -76,12 +76,13 @@ export default function AlmanacPopup({ onClose }: Props) {
     })),
   ];
 
-  // 1. Định nghĩa trọng số để sắp xếp (số càng nhỏ xếp càng trước)
+  // 1. Định nghĩa trọng số để sắp xếp (Thêm hạng UR lớn nhất)
   const rarityWeight: Record<string, number> = {
     common: 1,
     rare: 2,
     epic: 3,
     legendary: 4,
+    ur: 5,
   };
 
   // 2. Lấy dữ liệu và tạo bản sao để sắp xếp
@@ -89,7 +90,7 @@ export default function AlmanacPopup({ onClose }: Props) {
   const sortedBaseItems = [...rawItems].sort((a, b) => {
     const weightA = rarityWeight[a.rarity?.toLowerCase() || 'common'] || 99;
     const weightB = rarityWeight[b.rarity?.toLowerCase() || 'common'] || 99;
-    return weightA - weightB; // Tăng dần: Common -> Rare -> Epic -> Legendary
+    return weightA - weightB; // Tăng dần: Common -> Rare -> Epic -> Legendary -> UR
   });
 
   // 3. Áp dụng logic lọc item theo tab và rarity trên mảng đã sắp xếp
@@ -103,9 +104,10 @@ export default function AlmanacPopup({ onClose }: Props) {
     achievement: 'Thành tựu',
   };
 
-  // Danh sách các nút phân loại độ hiếm
+  // Danh sách các nút phân loại độ hiếm (Đã thêm nút UR)
   const rarityButtons = [
     { id: 'all', label: 'Tất cả' },
+    { id: 'ur', label: 'UR' },
     { id: 'legendary', label: 'Legendary' },
     { id: 'epic', label: 'Epic' },
     { id: 'rare', label: 'Rare' },
@@ -156,7 +158,7 @@ export default function AlmanacPopup({ onClose }: Props) {
           {/* Tabs */}
           <div className="flex gap-2 mb-3">
             <button
-              onClick={() => { setTab('pets'); setRarityFilter('all'); }} // Tùy chọn: Reset filter khi đổi tab
+              onClick={() => { setTab('pets'); setRarityFilter('all'); }} 
               className={`px-4 py-2 rounded-lg font-medium transition ${
                 tab === 'pets' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
               }`}
@@ -164,7 +166,7 @@ export default function AlmanacPopup({ onClose }: Props) {
               🐾 Thú cưng
             </button>
             <button
-              onClick={() => { setTab('titles'); setRarityFilter('all'); }} // Tùy chọn: Reset filter khi đổi tab
+              onClick={() => { setTab('titles'); setRarityFilter('all'); }} 
               className={`px-4 py-2 rounded-lg font-medium transition ${
                 tab === 'titles' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
               }`}
@@ -196,6 +198,7 @@ export default function AlmanacPopup({ onClose }: Props) {
               currentItems.map((item) => {
                 const owned = isOwned(item);
                 const equipped = isEquipped(item);
+                // Đảm bảo getRarityStyle() của bạn đã cấu hình màu cho 'ur' nhé!
                 const rarityStyle = getRarityStyle(item.rarity as any);
 
                 return (

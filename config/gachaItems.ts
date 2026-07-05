@@ -203,7 +203,14 @@ export const GACHA_PETS: ShopPet[] = [
   imageUrl: 'https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExM3hyeTN5MWJsZG04aXhrdm92Z2thZnZ6NnZxMWdxajliYnU2MTFhcyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/6jWVlx6yIGzNtWRLFd/giphy.gif',
   price: 0,
 },
-
+{
+  id: 'gacha_pet_30',
+  name: 'Phượng Hoàng Vũ Trụ',
+  description: 'Sức mạnh tối thượng.',
+  rarity: 'UR',
+  imageUrl: '',
+  price: 0,
+}
   // Thêm pet Gacha mới ở đây...
 ];
 
@@ -238,10 +245,11 @@ export const GACHA_TITLES: ShopTitle[] = [
 
 // ==================== CẤU HÌNH GACHA ====================
 export const GACHA_RATES = {
-  Common: 60,
-  Rare: 20,
-  Epic: 15,
-  Legendary: 5,
+  Common: 61.7,
+  Rare: 25,
+  Epic: 10,
+  Legendary: 3,
+  UR: 0.3,
 };
 
 export const GACHA_COST = 100;

@@ -1,4 +1,4 @@
-export type Rarity = 'Common' | 'Rare' | 'Epic' | 'Legendary';
+export type Rarity = 'Common' | 'Rare' | 'Epic' | 'Legendary' | 'UR';
 
 export interface ShopPet {
   id: string;
