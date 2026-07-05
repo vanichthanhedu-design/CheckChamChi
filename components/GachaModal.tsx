@@ -13,6 +13,8 @@ interface Props {
 }
 
 export default function GachaModal({ onClose }: Props) {
+  const gachaPullByType = useAppStore((s) => s.gachaPullByType);
+  const [tab, setTab] = useState<'pet' | 'title'>('pet');
   const profile = useAppStore((s) => s.profile);
   const gachaPull = useAppStore((s) => s.gachaPull);
   const equipPet = useAppStore((s) => s.equipPet);
@@ -25,15 +27,11 @@ export default function GachaModal({ onClose }: Props) {
 
   const handlePull = () => {
     if (spinning || profile.coins < GACHA_COST) return;
-
     setSpinning(true);
     setResult(null);
-
     setTimeout(() => {
-      const pullResult = gachaPull();
-      if (pullResult) {
-        setResult(pullResult);
-      }
+      const pullResult = gachaPullByType(tab);
+      if (pullResult) setResult(pullResult);
       setSpinning(false);
     }, 2000);
   };
@@ -76,6 +74,26 @@ export default function GachaModal({ onClose }: Props) {
             </div>
           </div>
 
+          {/* Tabs */}
+          <div className="flex gap-2 mb-4 justify-center">
+            <button
+              onClick={() => { setTab('pet'); setResult(null); }}
+              className={`px-4 py-2 rounded-lg font-medium transition ${
+                tab === 'pet' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+              }`}
+            >
+              🐾 Thú cưng
+            </button>
+            <button
+              onClick={() => { setTab('title'); setResult(null); }}
+              className={`px-4 py-2 rounded-lg font-medium transition ${
+                tab === 'title' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+              }`}
+            >
+              🏅 Danh hiệu
+            </button>
+          </div>
+
           <div className="relative w-48 h-48 mx-auto mb-6">
             <motion.div
               className="w-full h-full rounded-2xl bg-gradient-to-br from-yellow-100 to-yellow-200 shadow-inner flex items-center justify-center text-6xl"
@@ -101,6 +119,7 @@ export default function GachaModal({ onClose }: Props) {
               />
             )}
           </div>
+          
           {!result && (
             <button
               onClick={handlePull}
@@ -117,80 +136,80 @@ export default function GachaModal({ onClose }: Props) {
 
           <AnimatePresence>
             {result && (
-  <motion.div
-    initial={{ opacity: 0, y: 20 }}
-    animate={{ opacity: 1, y: 0 }}
-    exit={{ opacity: 0, y: -20 }}
-    className="mt-4 space-y-3"
-  >
-    <div className="p-4 bg-gray-50 rounded-xl">
-      {/* Luôn hiển thị hình ảnh/icon của vật phẩm */}
-      <div className="flex justify-center mb-2">
-        {isPet(result.item) ? (
-          <img
-            src={result.item.imageUrl}
-            alt={result.item.name}
-            className={`w-20 h-20 object-cover rounded-full border-2 ${rarityStyle?.border}`}
-          />
-        ) : (
-          <span className="text-5xl">
-            {(result.item as ShopTitle).icon}
-          </span>
-        )}
-      </div>
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                className="mt-4 space-y-3"
+              >
+                <div className="p-4 bg-gray-50 rounded-xl">
+                  {/* Luôn hiển thị hình ảnh/icon của vật phẩm */}
+                  <div className="flex justify-center mb-2">
+                    {isPet(result.item) ? (
+                      <img
+                        src={result.item.imageUrl}
+                        alt={result.item.name}
+                        className={`w-20 h-20 object-cover rounded-full border-2 ${rarityStyle?.border}`}
+                      />
+                    ) : (
+                      <span className="text-5xl">
+                        {(result.item as ShopTitle).icon}
+                      </span>
+                    )}
+                  </div>
 
-      {/* Tên vật phẩm (có màu theo độ hiếm) */}
-      <p className={`font-bold text-lg ${rarityStyle?.name}`}>
-        {result.item.name}
-      </p>
+                  {/* Tên vật phẩm (có màu theo độ hiếm) */}
+                  <p className={`font-bold text-lg ${rarityStyle?.name}`}>
+                    {result.item.name}
+                  </p>
 
-      {/* Độ hiếm */}
-      <p className="text-sm text-gray-500">
-        {result.item.rarity.toUpperCase()}
-      </p>
+                  {/* Độ hiếm */}
+                  <p className="text-sm text-gray-500">
+                    {result.item.rarity.toUpperCase()}
+                  </p>
 
-      {/* Dòng thông báo trùng lặp hoặc chúc mừng */}
-      {result.isDuplicate ? (
-        <div className="mt-2">
-          <p className="text-sm font-medium text-orange-600">
-            🔄 Bạn đã sở hữu vật phẩm này rồi!
-          </p>
-          <p className="text-xs text-gray-500 mt-1">
-            Được hoàn lại +{DUPLICATE_REFUND} 🪙
-          </p>
-        </div>
-      ) : (
-        <div className="mt-2">
-          <p className="text-sm font-medium text-green-600">
-            🎉 Chúc mừng! Bạn đã nhận được vật phẩm mới!
-          </p>
-        </div>
-      )}
-    </div>
+                  {/* Dòng thông báo trùng lặp hoặc chúc mừng */}
+                  {result.isDuplicate ? (
+                    <div className="mt-2">
+                      <p className="text-sm font-medium text-orange-600">
+                        🔄 Bạn đã sở hữu vật phẩm này rồi!
+                      </p>
+                      <p className="text-xs text-gray-500 mt-1">
+                        Được hoàn lại +{DUPLICATE_REFUND} 🪙
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="mt-2">
+                      <p className="text-sm font-medium text-green-600">
+                        🎉 Chúc mừng! Bạn đã nhận được vật phẩm mới!
+                      </p>
+                    </div>
+                  )}
+                </div>
 
-    {/* Các nút hành động (giữ nguyên logic cũ) */}
-    <div className="flex gap-2">
-      {!result.isDuplicate && isPet(result.item) && (
-        <button
-          onClick={handleEquip}
-          className="flex-1 py-2 bg-green-500 text-white rounded-xl font-semibold hover:bg-green-600 transition"
-        >
-          Trang bị ngay
-        </button>
-      )}
-      <button
-        onClick={() => setResult(null)}
-        className={`py-2 rounded-xl font-semibold transition ${
-          !result.isDuplicate && isPet(result.item)
-            ? 'flex-1 bg-gray-200 text-gray-700 hover:bg-gray-300'
-            : 'w-full bg-gray-200 text-gray-700 hover:bg-gray-300'
-        }`}
-      >
-        Đóng
-      </button>
-    </div>
-  </motion.div>
-)}
+                {/* Các nút hành động (giữ nguyên logic cũ) */}
+                <div className="flex gap-2">
+                  {!result.isDuplicate && isPet(result.item) && (
+                    <button
+                      onClick={handleEquip}
+                      className="flex-1 py-2 bg-green-500 text-white rounded-xl font-semibold hover:bg-green-600 transition"
+                    >
+                      Trang bị ngay
+                    </button>
+                  )}
+                  <button
+                    onClick={() => setResult(null)}
+                    className={`py-2 rounded-xl font-semibold transition ${
+                      !result.isDuplicate && isPet(result.item)
+                        ? 'flex-1 bg-gray-200 text-gray-700 hover:bg-gray-300'
+                        : 'w-full bg-gray-200 text-gray-700 hover:bg-gray-300'
+                    }`}
+                  >
+                    Đóng
+                  </button>
+                </div>
+              </motion.div>
+            )}
           </AnimatePresence>
         </motion.div>
       </motion.div>

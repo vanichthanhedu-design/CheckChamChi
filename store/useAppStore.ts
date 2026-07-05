@@ -172,6 +172,7 @@ export interface AppActions {
   unequipPet: () => void;
   addCoins: (amount: number) => void;
   addShopTitle: (titleId: string) => void;
+  gachaPullByType: (type: 'pet' | 'title') => { item: ShopPet | ShopTitle; isDuplicate: boolean } | null;
 }
 
 // ============================================
@@ -225,7 +226,7 @@ const initialState: AppState = {
     avatar: '',
     theme: 'light',
     primaryColor: '#3B82F6',
-    coins: 5000,
+    coins: 1000,
   },
   streaks: {
     currentStreak: 0,
@@ -313,6 +314,50 @@ export const useAppStore = create<AppState & AppActions>()(
 
         return { item: randomItem, isDuplicate: false };
       },
+
+      gachaPullByType: (type) => {
+  const state = get();
+  if (state.profile.coins < GACHA_COST) return null;
+
+  const newCoin = state.profile.coins - GACHA_COST;
+
+  // Logic random (giữ nguyên GACHA_RATES)
+  const totalWeight = GACHA_RATES.Common + GACHA_RATES.Rare + GACHA_RATES.Epic + GACHA_RATES.Legendary;
+  let random = Math.random() * totalWeight;
+  let rarity = 'Common';
+  if (random < GACHA_RATES.Legendary) rarity = 'Legendary';
+  else if (random < GACHA_RATES.Legendary + GACHA_RATES.Epic) rarity = 'Epic';
+  else if (random < GACHA_RATES.Legendary + GACHA_RATES.Epic + GACHA_RATES.Rare) rarity = 'Rare';
+
+  // Pool theo loại
+  const pool: (ShopPet | ShopTitle)[] = type === 'pet'
+    ? [...GACHA_PETS.filter(p => p.rarity === rarity)]
+    : [...GACHA_TITLES.filter(t => t.rarity === rarity)];
+
+  if (pool.length === 0) {
+    set({ profile: { ...state.profile, coins: state.profile.coins } });
+    return null;
+  }
+
+  const randomItem = pool[Math.floor(Math.random() * pool.length)];
+  const isPet = 'imageUrl' in randomItem;
+  const isDuplicate = isPet
+    ? state.userPets.includes(randomItem.id)
+    : state.userTitles.includes(randomItem.id);
+
+  if (isDuplicate) {
+    set({ profile: { ...state.profile, coins: newCoin + DUPLICATE_REFUND } });
+    return { item: randomItem, isDuplicate: true };
+  }
+
+  if (isPet) {
+    set({ profile: { ...state.profile, coins: newCoin }, userPets: [...state.userPets, randomItem.id] });
+  } else {
+    set({ profile: { ...state.profile, coins: newCoin }, userTitles: [...state.userTitles, randomItem.id] });
+  }
+
+  return { item: randomItem, isDuplicate: false };
+},
 
       buyItem: (itemId, type) => {
         const state = get();
